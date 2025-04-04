@@ -1,15 +1,19 @@
 import db from '../db/db.js';
 
-class Category {
-  static tableName = 'categories';
+class Product {
+  static tableName = 'products';
 
-  static async getAll(showDeleted = false, onlyDeleted = false) {
+  static async getAll(showDeleted = false, onlyDeleted = false, categoryId = null) {
     const query = db(this.tableName);
 
     if (onlyDeleted) {
       query.whereNotNull('deleted_at');
     } else if (!showDeleted) {
       query.whereNull('deleted_at');
+    }
+
+    if (categoryId) {
+      query.where('category_id', categoryId);
     }
 
     return await query.select('*');
@@ -23,7 +27,7 @@ class Category {
   }
 
   static async create(data) {
-    const [category] = await db(this.tableName)
+    const [product] = await db(this.tableName)
       .insert({
         ...data,
         created_at: new Date(),
@@ -31,11 +35,11 @@ class Category {
       })
       .returning('*');
     
-    return category;
+    return product;
   }
 
   static async update(id, data) {
-    const [category] = await db(this.tableName)
+    const [product] = await db(this.tableName)
       .where({ id })
       .whereNull('deleted_at')
       .update({
@@ -44,11 +48,11 @@ class Category {
       })
       .returning('*');
     
-    return category;
+    return product;
   }
 
   static async softDelete(id) {
-    const [category] = await db(this.tableName)
+    const [product] = await db(this.tableName)
       .where({ id })
       .whereNull('deleted_at')
       .update({
@@ -57,11 +61,11 @@ class Category {
       })
       .returning('*');
     
-    return category;
+    return product;
   }
 
   static async restore(id) {
-    const [category] = await db(this.tableName)
+    const [product] = await db(this.tableName)
       .where({ id })
       .whereNotNull('deleted_at')
       .update({
@@ -70,7 +74,7 @@ class Category {
       })
       .returning('*');
     
-    return category;
+    return product;
   }
 
   static async getDeleted() {
@@ -79,15 +83,22 @@ class Category {
       .select('*');
   }
 
-  // Gerçekten silmek için (hard delete)
   static async hardDelete(id) {
-    const [category] = await db(this.tableName)
+    const [product] = await db(this.tableName)
       .where({ id })
       .del()
       .returning('*');
     
-    return category;
+    return product;
+  }
+
+  // Kategori bazlı ürün listeleme
+  static async getByCategory(categoryId) {
+    return db(this.tableName)
+      .where({ category_id: categoryId })
+      .whereNull('deleted_at')
+      .select('*');
   }
 }
 
-export default Category; 
+export default Product; 

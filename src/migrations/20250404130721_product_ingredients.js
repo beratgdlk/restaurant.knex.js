@@ -1,14 +1,27 @@
-export async function up(knex) {
-  return knex.schema.createTable('product_ingredients', function(table) {
+export function up(knex) {
+  return knex.schema.createTable('product_ingredients', (table) => {
     table.increments('id').primary();
-    table.integer('product_id').unsigned().notNullable().references('id').inTable('products').onDelete('CASCADE');
-    table.integer('ingredient_id').unsigned().notNullable().references('id').inTable('ingredients').onDelete('CASCADE');
+    table.integer('product_id').unsigned().notNullable();
+    table.integer('ingredient_id').unsigned().notNullable();
+    table.decimal('amount', 10, 2).notNullable();
+    table.string('unit').notNullable();
+    table.timestamp('created_at').defaultTo(knex.fn.now());
+    table.timestamp('updated_at').defaultTo(knex.fn.now());
 
-    // Composite unique key
+    table.foreign('product_id')
+      .references('id')
+      .inTable('products')
+      .onDelete('CASCADE');
+
+    table.foreign('ingredient_id')
+      .references('id')
+      .inTable('ingredients')
+      .onDelete('CASCADE');
+
     table.unique(['product_id', 'ingredient_id']);
   });
 }
 
-export async function down(knex) {
+export function down(knex) {
   return knex.schema.dropTable('product_ingredients');
 }
