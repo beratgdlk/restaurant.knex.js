@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
 import categoryRoutes from './routes/routes.category.js';
 import productRoutes from './routes/routes.product.js';
 
@@ -9,6 +11,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
+app.use(cors());
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -1,104 +1,53 @@
-import db from '../db/db.js';
+const knex = require('../config/database');
 
 class Product {
-  static tableName = 'products';
+  static async getAll(category = null, showDeleted = false) {
+    let query = knex('products');
 
-  static async getAll(showDeleted = false, onlyDeleted = false, categoryId = null) {
-    const query = db(this.tableName);
-
-    if (onlyDeleted) {
-      query.whereNotNull('deleted_at');
-    } else if (!showDeleted) {
-      query.whereNull('deleted_at');
+    if (category) {
+      query = query.where('category_id', category);
     }
 
-    if (categoryId) {
-      query.where('category_id', categoryId);
+    if (showDeleted === 'true') {
+      query = query.withDeleted();
+    } else if (showDeleted === 'onlyDeleted') {
+      query = query.onlyDeleted();
     }
 
-    return await query.select('*');
+    return await query;
   }
 
   static async getById(id) {
-    return await db(this.tableName)
-      .where({ id })
-      .whereNull('deleted_at')
-      .first();
+    return await knex('products').where('id', id).first();
+  }
+
+  static async getByCategory(categoryId) {
+    return await knex('products').where('category_id', categoryId);
   }
 
   static async create(data) {
-    const [product] = await db(this.tableName)
-      .insert({
-        ...data,
-        created_at: new Date(),
-        updated_at: new Date()
-      })
-      .returning('*');
-    
-    return product;
+    const [id] = await knex('products').insert(data);
+    return await this.getById(id);
   }
 
   static async update(id, data) {
-    const [product] = await db(this.tableName)
-      .where({ id })
-      .whereNull('deleted_at')
-      .update({
-        ...data,
-        updated_at: new Date()
-      })
-      .returning('*');
-    
-    return product;
+    await knex('products').where('id', id).update(data);
+    return await this.getById(id);
   }
 
   static async softDelete(id) {
-    const [product] = await db(this.tableName)
-      .where({ id })
-      .whereNull('deleted_at')
-      .update({
-        deleted_at: new Date(),
-        updated_at: new Date()
-      })
-      .returning('*');
-    
-    return product;
+    await knex('products').where('id', id).update({ deleted_at: new Date() });
+    return await this.getById(id);
   }
 
   static async restore(id) {
-    const [product] = await db(this.tableName)
-      .where({ id })
-      .whereNotNull('deleted_at')
-      .update({
-        deleted_at: null,
-        updated_at: new Date()
-      })
-      .returning('*');
-    
-    return product;
-  }
-
-  static async getDeleted() {
-    return db(this.tableName)
-      .whereNotNull('deleted_at')
-      .select('*');
+    await knex('products').where('id', id).update({ deleted_at: null });
+    return await this.getById(id);
   }
 
   static async hardDelete(id) {
-    const [product] = await db(this.tableName)
-      .where({ id })
-      .del()
-      .returning('*');
-    
-    return product;
-  }
-
-  // Kategori bazlı ürün listeleme
-  static async getByCategory(categoryId) {
-    return db(this.tableName)
-      .where({ category_id: categoryId })
-      .whereNull('deleted_at')
-      .select('*');
+    return await knex('products').where('id', id).del();
   }
 }
 
-export default Product; 
+module.exports = Product; 
