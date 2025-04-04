@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import Product from '../models/models.product.js';
+
 const router = express.Router();
-const Product = require('../models/models.product');
 
 // Tüm ürünleri listele (filtreleme destekli)
 router.get('/', async (req, res) => {
@@ -104,4 +105,4 @@ router.delete('/:id/hard', async (req, res) => {
   }
 });
 
-module.exports = router; 
+export default router; 

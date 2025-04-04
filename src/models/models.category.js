@@ -1,92 +1,44 @@
-import db from '../db/db.js';
+import knex from '../config/database.js';
 
 class Category {
-  static tableName = 'categories';
+  static async getAll(showDeleted = false) {
+    let query = knex('categories');
 
-  static async getAll(showDeleted = false, onlyDeleted = false) {
-    const query = db(this.tableName);
-
-    if (onlyDeleted) {
-      query.whereNotNull('deleted_at');
-    } else if (!showDeleted) {
-      query.whereNull('deleted_at');
+    if (showDeleted === 'true') {
+      query = query.withDeleted();
+    } else if (showDeleted === 'onlyDeleted') {
+      query = query.onlyDeleted();
     }
 
-    return await query.select('*');
+    return await query;
   }
 
   static async getById(id) {
-    return await db(this.tableName)
-      .where({ id })
-      .whereNull('deleted_at')
-      .first();
+    return await knex('categories').where('id', id).first();
   }
 
   static async create(data) {
-    const [category] = await db(this.tableName)
-      .insert({
-        ...data,
-        created_at: new Date(),
-        updated_at: new Date()
-      })
-      .returning('*');
-    
-    return category;
+    const [id] = await knex('categories').insert(data);
+    return await this.getById(id);
   }
 
   static async update(id, data) {
-    const [category] = await db(this.tableName)
-      .where({ id })
-      .whereNull('deleted_at')
-      .update({
-        ...data,
-        updated_at: new Date()
-      })
-      .returning('*');
-    
-    return category;
+    await knex('categories').where('id', id).update(data);
+    return await this.getById(id);
   }
 
   static async softDelete(id) {
-    const [category] = await db(this.tableName)
-      .where({ id })
-      .whereNull('deleted_at')
-      .update({
-        deleted_at: new Date(),
-        updated_at: new Date()
-      })
-      .returning('*');
-    
-    return category;
+    await knex('categories').where('id', id).update({ deleted_at: new Date() });
+    return await this.getById(id);
   }
 
   static async restore(id) {
-    const [category] = await db(this.tableName)
-      .where({ id })
-      .whereNotNull('deleted_at')
-      .update({
-        deleted_at: null,
-        updated_at: new Date()
-      })
-      .returning('*');
-    
-    return category;
+    await knex('categories').where('id', id).update({ deleted_at: null });
+    return await this.getById(id);
   }
 
-  static async getDeleted() {
-    return db(this.tableName)
-      .whereNotNull('deleted_at')
-      .select('*');
-  }
-
-  // Gerçekten silmek için (hard delete)
   static async hardDelete(id) {
-    const [category] = await db(this.tableName)
-      .where({ id })
-      .del()
-      .returning('*');
-    
-    return category;
+    return await knex('categories').where('id', id).del();
   }
 }
 

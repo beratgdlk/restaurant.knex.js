@@ -1,4 +1,4 @@
-const knex = require('../config/database');
+import knex from '../config/database.js';
 
 class Product {
   static async getAll(category = null, showDeleted = false) {
@@ -50,4 +50,4 @@ class Product {
   }
 }
 
-module.exports = Product; 
+export default Product; 

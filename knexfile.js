@@ -1,27 +1,24 @@
-import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-dotenv.config();
 
 export default {
   development: {
     client: 'pg',
     connection: {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT || 5432,
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+      database: process.env.DB_NAME || 'restaurant'
     },
     migrations: {
-      directory: './src/migrations'
+      directory: join(__dirname, 'migrations')
     },
     seeds: {
-      directory: './src/seeds'
+      directory: join(__dirname, 'seeds')
     }
   },
   production: {

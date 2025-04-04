@@ -1,28 +1,21 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import categoryRoutes from './routes/routes.category.js';
 import productRoutes from './routes/routes.product.js';
 
-dotenv.config();
-
 const app = express();
-const port = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Routes
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 
-// Test endpoint'i
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'Restaurant API çalışıyor!',
     endpoints: {
       categories: {
@@ -42,7 +35,8 @@ app.get('/', (req, res) => {
   });
 });
 
-// Sunucuyu başlat
-app.listen(port, () => {
-  console.log(`Sunucu ${port} portunda çalışıyor`);
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Sunucu ${PORT} portunda çalışıyor`);
 }); 
