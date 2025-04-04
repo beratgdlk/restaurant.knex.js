@@ -1,0 +1,314 @@
+{
+  "info": {
+    "name": "Restaurant API",
+    "description": "Restaurant yönetim sistemi API endpoint'leri",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Ana Sayfa",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        },
+        "description": "API'nin çalışıp çalışmadığını kontrol eder"
+      },
+      "response": [
+        {
+          "name": "Başarılı Yanıt",
+          "originalRequest": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"message\": \"Restaurant API çalışıyor!\",\n  \"endpoints\": {\n    \"categories\": {\n      \"base\": \"/api/categories\",\n      \"filters\": {\n        \"showDeleted\": \"true | false | onlyDeleted\"\n      }\n    },\n    \"products\": {\n      \"base\": \"/api/products\",\n      \"filters\": {\n        \"category\": \"kategori id\",\n        \"showDeleted\": \"true | false | onlyDeleted\"\n      }\n    }\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "2. Kategoriler",
+      "item": [
+        {
+          "name": "2.1. Listeleme İşlemleri",
+          "item": [
+            {
+              "name": "Tüm Kategorileri Listele",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/categories",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "categories"]
+                },
+                "description": "Aktif kategorileri listeler"
+              },
+              "response": [
+                {
+                  "name": "Başarılı Yanıt",
+                  "originalRequest": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/api/categories",
+                      "host": ["{{base_url}}"],
+                      "path": ["api", "categories"]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Ana Yemekler\",\n    \"description\": \"Ana yemek kategorisi\",\n    \"created_at\": \"2024-04-04T10:00:00.000Z\",\n    \"updated_at\": \"2024-04-04T10:00:00.000Z\",\n    \"deleted_at\": null\n  }\n]"
+                }
+              ]
+            },
+            {
+              "name": "Tüm Kategorileri Listele (Silinmişler Dahil)",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/categories?showDeleted=true",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "categories"],
+                  "query": [
+                    {
+                      "key": "showDeleted",
+                      "value": "true"
+                    }
+                  ]
+                },
+                "description": "Tüm kategorileri listeler (silinmişler dahil)"
+              },
+              "response": [
+                {
+                  "name": "Başarılı Yanıt",
+                  "originalRequest": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/api/categories?showDeleted=true",
+                      "host": ["{{base_url}}"],
+                      "path": ["api", "categories"],
+                      "query": [
+                        {
+                          "key": "showDeleted",
+                          "value": "true"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Ana Yemekler\",\n    \"description\": \"Ana yemek kategorisi\",\n    \"created_at\": \"2024-04-04T10:00:00.000Z\",\n    \"updated_at\": \"2024-04-04T10:00:00.000Z\",\n    \"deleted_at\": null\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Tatlılar\",\n    \"description\": \"Tatlı kategorisi\",\n    \"created_at\": \"2024-04-04T10:00:00.000Z\",\n    \"updated_at\": \"2024-04-04T11:00:00.000Z\",\n    \"deleted_at\": \"2024-04-04T11:00:00.000Z\"\n  }\n]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.2. Detay İşlemleri",
+          "item": [
+            {
+              "name": "Kategori Detayı",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/categories/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "categories", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1",
+                      "description": "Kategori ID"
+                    }
+                  ]
+                },
+                "description": "ID'ye göre kategori detayını getirir"
+              },
+              "response": [
+                {
+                  "name": "Başarılı Yanıt",
+                  "originalRequest": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/api/categories/1",
+                      "host": ["{{base_url}}"],
+                      "path": ["api", "categories", "1"]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "body": "{\n  \"id\": 1,\n  \"name\": \"Ana Yemekler\",\n  \"description\": \"Ana yemek kategorisi\",\n  \"created_at\": \"2024-04-04T10:00:00.000Z\",\n  \"updated_at\": \"2024-04-04T10:00:00.000Z\",\n  \"deleted_at\": null\n}"
+                },
+                {
+                  "name": "Bulunamadı Yanıtı",
+                  "originalRequest": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/api/categories/999",
+                      "host": ["{{base_url}}"],
+                      "path": ["api", "categories", "999"]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "body": "{\n  \"error\": \"Kategori bulunamadı\"\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "2.3. Veri İşlemleri",
+          "item": [
+            {
+              "name": "Yeni Kategori Oluştur",
+              "request": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/api/categories",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "categories"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Yeni Kategori\",\n  \"description\": \"Kategori açıklaması\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Yeni bir kategori oluşturur"
+              },
+              "response": [
+                {
+                  "name": "Başarılı Yanıt",
+                  "originalRequest": {
+                    "method": "POST",
+                    "url": {
+                      "raw": "{{base_url}}/api/categories",
+                      "host": ["{{base_url}}"],
+                      "path": ["api", "categories"]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"Yeni Kategori\",\n  \"description\": \"Kategori açıklaması\"\n}"
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "body": "{\n  \"message\": \"Kategori başarıyla oluşturuldu\",\n  \"category\": {\n    \"id\": 3,\n    \"name\": \"Yeni Kategori\",\n    \"description\": \"Kategori açıklaması\",\n    \"created_at\": \"2024-04-04T12:00:00.000Z\",\n    \"updated_at\": \"2024-04-04T12:00:00.000Z\",\n    \"deleted_at\": null\n  }\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Ürünler",
+      "item": [
+        {
+          "name": "3.1. Listeleme İşlemleri",
+          "item": [
+            {
+              "name": "Tüm Ürünleri Listele",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/products",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "products"]
+                },
+                "description": "Aktif ürünleri listeler"
+              },
+              "response": [
+                {
+                  "name": "Başarılı Yanıt",
+                  "originalRequest": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/api/products",
+                      "host": ["{{base_url}}"],
+                      "path": ["api", "products"]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Karnıyarık\",\n    \"description\": \"Patlıcan yemeği\",\n    \"price\": 45.99,\n    \"category_id\": 1,\n    \"created_at\": \"2024-04-04T10:00:00.000Z\",\n    \"updated_at\": \"2024-04-04T10:00:00.000Z\",\n    \"deleted_at\": null\n  }\n]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "3.2. Detay İşlemleri",
+          "item": [
+            {
+              "name": "Ürün Detayı",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/api/products/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "products", ":id"],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "1",
+                      "description": "Ürün ID"
+                    }
+                  ]
+                },
+                "description": "ID'ye göre ürün detayını getirir"
+              },
+              "response": [
+                {
+                  "name": "Başarılı Yanıt",
+                  "originalRequest": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/api/products/1",
+                      "host": ["{{base_url}}"],
+                      "path": ["api", "products", "1"]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "body": "{\n  \"id\": 1,\n  \"name\": \"Karnıyarık\",\n  \"description\": \"Patlıcan yemeği\",\n  \"price\": 45.99,\n  \"category_id\": 1,\n  \"created_at\": \"2024-04-04T10:00:00.000Z\",\n  \"updated_at\": \"2024-04-04T10:00:00.000Z\",\n  \"deleted_at\": null\n}"
+                },
+                {
+                  "name": "Bulunamadı Yanıtı",
+                  "originalRequest": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/api/products/999",
+                      "host": ["{{base_url}}"],
+                      "path": ["api", "products", "999"]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "body": "{\n  \"error\": \"Ürün bulunamadı\"\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 
