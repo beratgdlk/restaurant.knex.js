@@ -31,12 +31,39 @@ class Category {
       .returning('*');
   }
 
-  static async delete(id) {
+  static async softDelete(id) {
     return db(this.tableName)
       .where({ id })
+      .whereNull('deleted_at')
       .update({
-        deleted_at: db.fn.now()
-      });
+        deleted_at: db.fn.now(),
+        updated_at: db.fn.now()
+      })
+      .returning('*');
+  }
+
+  static async restore(id) {
+    return db(this.tableName)
+      .where({ id })
+      .whereNotNull('deleted_at')
+      .update({
+        deleted_at: null,
+        updated_at: db.fn.now()
+      })
+      .returning('*');
+  }
+
+  static async getDeleted() {
+    return db(this.tableName)
+      .whereNotNull('deleted_at')
+      .select('*');
+  }
+
+  // Gerçekten silmek için (hard delete)
+  static async hardDelete(id) {
+    return db(this.tableName)
+      .where({ id })
+      .del();
   }
 }
 

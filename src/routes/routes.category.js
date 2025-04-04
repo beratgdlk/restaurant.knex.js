@@ -9,4 +9,8 @@ router.post('/', categoryController.create);
 router.patch('/:id', categoryController.update);
 router.delete('/:id', categoryController.delete);
 
+router.get('/deleted/all', categoryController.getDeleted);
+router.post('/:id/restore', categoryController.restore);
+router.delete('/:id/hard', categoryController.hardDelete);
+
 export default router; 

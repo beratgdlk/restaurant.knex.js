@@ -14,6 +14,18 @@ class CategoryController {
     }
   }
 
+  async getDeleted(req, res) {
+    try {
+      const categories = await Category.getDeleted();
+      res.status(HTTP_STATUS.OK).json(categories);
+    } catch (error) {
+      console.error('Error in getDeleted categories:', error);
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+        error: ERROR_MESSAGES.INTERNAL_ERROR
+      });
+    }
+  }
+
   async getById(req, res) {
     try {
       const { id } = req.params;
@@ -75,7 +87,7 @@ class CategoryController {
   async delete(req, res) {
     try {
       const { id } = req.params;
-      const result = await Category.delete(id);
+      const result = await Category.softDelete(id);
 
       if (!result) {
         return res.status(HTTP_STATUS.NOT_FOUND).json({
@@ -88,6 +100,51 @@ class CategoryController {
       });
     } catch (error) {
       console.error('Error in delete category:', error);
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+        error: ERROR_MESSAGES.INTERNAL_ERROR
+      });
+    }
+  }
+
+  async restore(req, res) {
+    try {
+      const { id } = req.params;
+      const result = await Category.restore(id);
+
+      if (!result) {
+        return res.status(HTTP_STATUS.NOT_FOUND).json({
+          error: ERROR_MESSAGES.CATEGORY_NOT_FOUND
+        });
+      }
+
+      res.status(HTTP_STATUS.OK).json({
+        message: SUCCESS_MESSAGES.CATEGORY_RESTORED,
+        category: result
+      });
+    } catch (error) {
+      console.error('Error in restore category:', error);
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+        error: ERROR_MESSAGES.INTERNAL_ERROR
+      });
+    }
+  }
+
+  async hardDelete(req, res) {
+    try {
+      const { id } = req.params;
+      const result = await Category.hardDelete(id);
+
+      if (!result) {
+        return res.status(HTTP_STATUS.NOT_FOUND).json({
+          error: ERROR_MESSAGES.CATEGORY_NOT_FOUND
+        });
+      }
+
+      res.status(HTTP_STATUS.OK).json({
+        message: SUCCESS_MESSAGES.CATEGORY_HARD_DELETED
+      });
+    } catch (error) {
+      console.error('Error in hard delete category:', error);
       res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         error: ERROR_MESSAGES.INTERNAL_ERROR
       });
