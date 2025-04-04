@@ -18,8 +18,22 @@ class Category {
   }
 
   static async create(data) {
-    const [id] = await knex('categories').insert(data);
-    return await this.getById(id);
+    try {
+      // PostgreSQL için returning kullanımı
+      const rows = await knex('categories')
+        .insert({
+          name: data.name,
+          description: data.description,
+          created_at: new Date(),
+          updated_at: new Date()
+        })
+        .returning('*');
+      
+      return rows[0]; // Direkt olarak eklenen kaydı dönüyoruz
+    } catch (error) {
+      console.error('Create category error:', error);
+      throw error;
+    }
   }
 
   static async update(id, data) {

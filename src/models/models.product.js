@@ -26,8 +26,24 @@ class Product {
   }
 
   static async create(data) {
-    const [id] = await knex('products').insert(data);
-    return await this.getById(id);
+    try {
+      // PostgreSQL için returning kullanımı
+      const rows = await knex('products')
+        .insert({
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          category_id: data.category_id,
+          created_at: new Date(),
+          updated_at: new Date()
+        })
+        .returning('*');
+      
+      return rows[0]; // Direkt olarak eklenen kaydı dönüyoruz
+    } catch (error) {
+      console.error('Create product error:', error);
+      throw error;
+    }
   }
 
   static async update(id, data) {

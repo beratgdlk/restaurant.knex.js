@@ -12,13 +12,13 @@ export default {
       port: process.env.DB_PORT || 5432,
       user: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'restaurant'
+      database: process.env.DB_NAME || 'restaurant_db'
     },
     migrations: {
-      directory: join(__dirname, 'migrations')
+      directory: './src/migrations'
     },
     seeds: {
-      directory: join(__dirname, 'seeds')
+      directory: './src/seeds'
     }
   },
   production: {
